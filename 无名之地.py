@@ -1,3 +1,4 @@
+#coding=gbk
 import pygame
 import time
 import sys
@@ -432,14 +433,31 @@ def remove_prop_character(character, prop):
     character.speed -= prop.speed
 
 
-def strengthen_prop(prop1, prop2):
+def strengthen_prop(prop):
     """强化装备"""
-    prop1.up_level(prop2.value)
-    if prop2.is_wear != 0:
-        remove_prop_character(character_list[prop2.is_wear], prop2)
+    prop.up_level(prop.need_exp)
+    if prop.is_wear != 0:
+        for i in character_list[prop.is_wear - 1].position:
+            if i.name == prop.name and i.numb == prop.numb:
+                i.attack = prop.attack
+                i.defence = prop.defence
+                i.health = prop.health
+                i.magic = prop.magic
+                i.critical = prop.critical
+                i.speed = prop.speed
+                i.luck = prop.luck
+                i.value = prop.value
     for i in prop_list:
-        if i.name == prop2.name and i.numb == prop2.numb:
-            prop_list.remove(i)
+        if i.name == prop.name and i.numb == prop.numb:
+            i.attack = prop.attack
+            i.defence = prop.defence
+            i.health = prop.health
+            i.magic = prop.magic
+            i.critical = prop.critical
+            i.speed = prop.speed
+            i.luck = prop.luck
+            i.value = prop.value
+    refresh_baggage(baggage, prop_list, drug_list, material_list)
 
 
 def enchant_prop(prop, material):
@@ -468,7 +486,6 @@ def enchant_prop(prop, material):
                 i.luck = prop.luck
                 i.value = prop.value
     refresh_baggage(baggage, prop_list, drug_list, material_list)
-
 
 def is_new(contents):
     new = contents["plot"]
@@ -729,6 +746,12 @@ while True:
                                     refresh_baggage(baggage, prop_list, drug_list, material_list)
                                     tag = 1
                                     break
+                                if (width - 200) / 3 + 100 < mouse_pos[0] < (width - 200) / 1.5 + 100 and 50 < mouse_pos[1] < 450:
+                                    if content['money'] >= baggage.objects[chose_num].need_exp:
+                                        content['money'] -= baggage.objects[chose_num].need_exp
+                                        strengthen_prop(baggage.objects[chose_num])
+                                        tag = 1
+                                        break
                                 if 100 < mouse_pos[0] < (width - 200) / 3 + 100 and 450 < mouse_pos[1] < 650:
                                     add_prop_character(character_list[0], baggage.objects[chose_num], 1)
                                     tag = 1
